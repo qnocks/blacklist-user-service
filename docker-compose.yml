@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  app:
+    container_name: blacklist-user-backend
+    image: blacklist-app
+    env_file:
+      .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    container_name: blacklist-user-db
+    image: postgres
+    environment:
+      - POSTGRES_DB=blacklistdb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 3

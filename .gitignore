@@ -1,0 +1,7 @@
+.bin
+.idea
+.DS_Store
+*.env
+*.ENV
+*.out
+db/pgdata

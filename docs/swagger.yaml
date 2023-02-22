@@ -1,0 +1,191 @@
+basePath: /
+definitions:
+  rest.createBlacklistUserInput:
+    properties:
+      cause:
+        type: string
+      caused_by:
+        type: string
+      phone:
+        type: string
+      username:
+        type: string
+    required:
+    - cause
+    - caused_by
+    - phone
+    - username
+    type: object
+  rest.errorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+      timestamp:
+        type: integer
+    type: object
+  rest.signInInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  rest.tokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  rest.userResponse:
+    properties:
+      cause:
+        type: string
+      caused_by:
+        type: string
+      id:
+        type: integer
+      phone:
+        type: string
+      timestamp:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: The purpose of an application is to store information about users who
+    have been added to the blacklist
+  title: Blacklist user service API
+  version: "1.0"
+paths:
+  /api/blacklist/:
+    get:
+      consumes:
+      - application/json
+      description: Get blacklisted users by provided phone or username
+      parameters:
+      - description: phone to search
+        in: query
+        name: phone
+        type: string
+      - description: username to search
+        in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get blacklisted users
+      tags:
+      - blacklist
+    post:
+      consumes:
+      - application/json
+      description: Store blacklisted user
+      parameters:
+      - description: blacklisted user
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/rest.createBlacklistUserInput'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Save blacklisted user
+      tags:
+      - blacklist
+  /api/blacklist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete blacklisted user by provided id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete blacklisted user
+      tags:
+      - blacklist
+  /auth/login/:
+    post:
+      consumes:
+      - application/json
+      description: Login with provided credentials
+      parameters:
+      - description: user credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/rest.signInInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.errorResponse'
+      summary: Login
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
